@@ -6,6 +6,7 @@
 #include <regex>
 #include <ctime>
 #include <time.h>
+#include <algorithm>
 
 using namespace std;
 
@@ -87,20 +88,23 @@ vector<string> full_f(int n) {
     }
     return inp_f;
 }
-
-void write(vector<string> m, vector<string> f, int hm) {
+//                                                  super slow v
+void write(vector<string> m, vector<string> f, int hm, bool counter) {
     ofstream d;
     d.open("data.txt");
     string chonk;
     for(auto k : m) {
         chonk += k + "\n";
+        if(counter) cout << to_string(count(chonk.begin(), chonk.end(), '\n')) + " / " + to_string(hm) + " " << k << endl;
     }
     for(auto l : f) {
         chonk += l + "\n";
+        if(counter) cout << to_string(f.size() + (count(chonk.begin(), chonk.end(), '\n') / 2)) + " / " + to_string(hm) + " " << l << endl;
     }
     if(hm % 2 != 0) {
         string gen = f[rand() % f.size()];
         chonk += gen;
+        if(counter) cout << to_string(hm) + " / " + to_string(hm) + " " << gen << endl;
     }
     d << chonk;
 	d.close();
@@ -114,7 +118,7 @@ int main() {
     srand(time(0));
     vector<string> m = full_m(hm / 2);
     vector<string> f = full_f(hm / 2);
-    write(m, f, hm);
+    write(m, f, hm, false);
     cout << "Completed in: " << float( clock() - begin_time) /  CLOCKS_PER_SEC << "s" << endl;
     system("pause");
     return 0;
