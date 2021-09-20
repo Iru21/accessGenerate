@@ -39,16 +39,39 @@ vector<string> get_imiona_f() {
     return vif;
 }
 
+string gen_pesel() {
+    string p = to_string(rand() % 99999 + 11111) + to_string(rand() % 999999 + 111111);
+    return p;
+}
+
+void rep(string& s, string se, string re) {
+    size_t pos = 0;
+    while((pos = s.find(se, pos)) != string::npos) {
+        s.replace(pos, se.length(), re);
+        pos += re.length();
+    }
+}
+
+string gen_nazwisko(bool f, vector<string> &nazwiska) {
+    if(f) {
+        std::string n = nazwiska[rand() % nazwiska.size()];
+        rep(n, "ski", "ska");
+        rep(n, "cki", "cka");
+        rep(n, "dzki", "dzka");
+        return n;
+    }
+    else {
+        string n = nazwiska[rand() % nazwiska.size()];
+        return n;
+    }
+}
+
 vector<string> full_m(int n) {
     vector<string> nazwiska = get_nazwiska();
     vector<string> imiona_m = get_imiona_m();
     vector<string> inp_m;
-    srand(time(0));
     for(int i = 0; i < n; i++) {
-
-        string pesel = to_string(rand() % 99999 + 11111) + to_string(rand() % 999999 + 111111);
-
-        string in = imiona_m[rand() % imiona_m.size()] + " " + nazwiska[rand() % nazwiska.size()] + " " + (string) pesel;
+        string in = imiona_m[rand() % imiona_m.size()] + " " + gen_nazwisko(false, nazwiska) + " " + gen_pesel();
         inp_m.push_back(in);
     }
     return inp_m;
@@ -58,17 +81,9 @@ vector<string> full_f(int n) {
     vector<string> nazwiska = get_nazwiska();
     vector<string> imiona_f = get_imiona_f();
     vector<string> inp_f;
-    srand(time(0));
-    for(int j = 0; j < n; j++) {
-        string selected = nazwiska[rand() % nazwiska.size()];
-        string n = regex_replace(selected, regex("ski$"), "ska");
-        n = regex_replace(n, regex("cki$"), "cka");
-        n = regex_replace(n, regex("dzki$"), "dzka");
-
-        string pesel = to_string(rand() % 99999 + 11111) + to_string(rand() % 999999 + 111111);
-
-        string inf = imiona_f[rand() % imiona_f.size()] + " " + n + " " + (string) pesel;
-        inp_f.push_back(inf);
+    for(int i = 0; i < n; i++) {
+        string in = imiona_f[rand() % imiona_f.size()] + " " + gen_nazwisko(true, nazwiska) + " " + gen_pesel();
+        inp_f.push_back(in);
     }
     return inp_f;
 }
@@ -77,33 +92,30 @@ void write(vector<string> m, vector<string> f, int hm) {
     ofstream d;
     d.open("data.txt");
     string chonk;
-    for(int k = 0; k < m.size(); k++) {
-        //cout << to_string(k) + " / " + to_string(hm) + " " << m[k] << endl;
-        chonk += m[k] + "\n";
+    for(auto k : m) {
+        chonk += k + "\n";
     }
-    for(int l = 0; l < f.size(); l++) {
-        //cout << to_string(f.size() + l + 1) + " / " + to_string(hm) + " " << f[l] << endl;
-        chonk +=  f[l] + "\n";
+    for(auto l : f) {
+        chonk += l + "\n";
     }
     if(hm % 2 != 0) {
         string gen = f[rand() % f.size()];
-        //cout << to_string(hm) + " / " + to_string(hm) + " " << gen << endl;
-        chonk +=  gen + "\n";
+        chonk += gen;
     }
     d << chonk;
 	d.close();
 }
 
 int main() {
-    cout << "How many? ";
+    cout << "How many? - ";
     int hm;
     cin >> hm;
-    system("cls");
     const clock_t begin_time = clock();
-    vector<string> inp_m = full_m(hm / 2);
-    vector<string> inp_f = full_f(hm / 2);
-    write(inp_m, inp_f, hm);
-    cout << float( clock() - begin_time) /  CLOCKS_PER_SEC << "s" << endl;
+    srand(time(0));
+    vector<string> m = full_m(hm / 2);
+    vector<string> f = full_f(hm / 2);
+    write(m, f, hm);
+    cout << "Completed in: " << float( clock() - begin_time) /  CLOCKS_PER_SEC << "s" << endl;
     system("pause");
     return 0;
 }
