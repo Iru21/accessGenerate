@@ -114,11 +114,14 @@ int main() {
     cout << "How many? - ";
     int hm;
     cin >> hm;
+    cout << "Log? - (y/n) - ";
+    char log;
+    cin >> log;
     const clock_t begin_time = clock();
     srand(time(0));
     vector<string> m = full_m(hm / 2);
     vector<string> f = full_f(hm / 2);
-    write(m, f, hm, false);
+    write(m, f, hm, log == 'y');
     cout << "Completed in: " << float( clock() - begin_time) /  CLOCKS_PER_SEC << "s" << endl;
     system("pause");
     return 0;
